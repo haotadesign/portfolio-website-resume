@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>Hao Ta — Senior Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black: #0d0d0d;
+            --dark: #1c1c1c;
+            --mid: #3d3d3d;
+            --muted: #7a7a7a;
+            --light: #b0b0b0;
+            --rule: #e2e2e2;
+            --bg: #fafafa;
+            --bg-subtle: #f2f2f0;
+            --nav-bg: rgba(250,250,250,0.92);
+            --nav-h: 64px;
+            --accent: #1a1a1a;
+            --accent-fg: #fff;
+            --stat-bg: #f5f4f1;
+            --hero-grad: linear-gradient(160deg, #fafafa 60%, #f0ede8 100%);
+        }
+
+        [data-theme="dark"] {
+            --black: #ededed;
+            --dark: #d8d8d8;
+            --mid: #a8a8a8;
+            --muted: #6a6a6a;
+            --light: #444;
+            --rule: #272727;
+            --bg: #0e0e0e;
+            --bg-subtle: #181818;
+            --nav-bg: rgba(14,14,14,0.92);
+            --accent: #ededed;
+            --accent-fg: #0e0e0e;
+            --stat-bg: #181818;
+            --hero-grad: linear-gradient(160deg, #0e0e0e 60%, #141210 100%);
+        }
+
+        html { scroll-behavior: smooth; font-size: 16px; height: auto; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s, color 0.3s;
+            height: auto;
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: sticky;
+            top: 0;
+            height: var(--nav-h);
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--rule);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+            z-index: 200;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s, border-color 0.3s;
+        }
+        nav.hidden { transform: translateY(-100%); }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+        .nav-brand img { display: block; }
+        .logo-black { display: block; }
+        .logo-white { display: none; }
+        [data-theme="dark"] .logo-black { display: none; }
+        [data-theme="dark"] .logo-white { display: block; }
+
+        .nav-center { display: flex; align-items: center; }
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-links a {
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--black); }
+
+        .nav-right { display: flex; align-items: center; gap: 0.75rem; }
+
+        /* Theme toggle */
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--rule);
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover { border-color: var(--light); color: var(--black); }
+        .theme-toggle .icon-moon { display: block; }
+        .theme-toggle .icon-sun  { display: none; }
+        [data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+        [data-theme="dark"] .theme-toggle .icon-sun  { display: block; }
+
+        /* Hamburger */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0 9px;
+            transition: border-color 0.2s;
+        }
+        .nav-hamburger span {
+            display: block;
+            height: 1.5px;
+            background: var(--muted);
+            border-radius: 2px;
+            transition: transform 0.3s, opacity 0.3s, background 0.2s;
+        }
+        .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+        /* Mobile drawer */
+        .mobile-menu {
+            display: none;
+            position: sticky;
+            top: var(--nav-h);
+            left: 0; right: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--rule);
+            z-index: 199;
+            padding: 1.25rem 1.5rem 1.75rem;
+            flex-direction: column;
+            gap: 0;
+            transform: translateY(-8px);
+            opacity: 0;
+            transition: opacity 0.25s ease, transform 0.25s ease, background 0.3s;
+        }
+        .mobile-menu.open { display: flex; opacity: 1; transform: none; }
+        .mobile-menu a {
+            font-size: 1rem;
+            color: var(--mid);
+            text-decoration: none;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--rule);
+            transition: color 0.2s;
+        }
+        .mobile-menu a:last-child { border-bottom: none; margin-top: 1rem; }
+        .mobile-menu a:hover { color: var(--black); }
+        .mobile-menu .mobile-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--bg);
+            background: var(--black);
+            border: none;
+            border-radius: 6px;
+            padding: 0.65rem 1.2rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem 3.5rem;
+            border-bottom: 1px solid var(--rule);
+            background: var(--hero-grad);
+        }
+
+        .hero-inner { max-width: 640px; }
+
+        .hero-eyebrow {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 1.1rem;
+            padding: 0.3rem 0.85rem;
+            border: 1px solid var(--rule);
+            border-radius: 999px;
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2.6rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: var(--black);
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-sub {
+            font-size: 0.95rem;
+            color: var(--muted);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-contacts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem 0.9rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .hero-contacts a, .hero-contacts span {
+            font-size: 0.85rem;
+            color: var(--mid);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .hero-contacts a:hover { color: var(--black); }
+        .hero-contacts .sep { color: var(--rule); }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: var(--accent-fg);
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 0.45rem 1rem;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            white-space: nowrap;
+        }
+        .btn-download:hover { opacity: 0.8; }
+        .btn-download svg { flex-shrink: 0; }
+
+        /* footer CTA row */
+        .footer-cta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            background: transparent;
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            padding: 0.45rem 1rem;
+            text-decoration: none;
+            transition: border-color 0.2s, color 0.2s;
+            white-space: nowrap;
+        }
+        .btn-outline:hover { border-color: var(--light); color: var(--black); }
+        .btn-outline svg { flex-shrink: 0; }
+
+        /* Back to top */
+        .back-top {
+            position: fixed;
+            bottom: 1.75rem;
+            right: 1.75rem;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--black);
+            color: var(--bg);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s, background 0.2s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+        }
+        .back-top.visible { opacity: 1; transform: none; }
+        .back-top:hover { opacity: 0.8; }
+
+        /* ── LAYOUT ── */
+        .container { max-width: 860px; margin: 0 auto; padding: 0 2.5rem; }
+
+        section { padding: 5rem 0; border-bottom: 1px solid var(--rule); }
+        section:last-of-type { border-bottom: none; }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--light);
+            margin-bottom: 3rem;
+        }
+
+        /* ── SUMMARY ── */
+        .summary-text {
+            font-size: 1.2rem;
+            font-weight: 300;
+            line-height: 1.85;
+            color: var(--mid);
+            max-width: 640px;
+        }
+
+        .summary-text strong { font-weight: 500; color: var(--dark); }
+
+        /* ── STATS ── */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--rule);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 3rem;
+        }
+        .stat {
+            background: var(--stat-bg);
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            color: var(--black);
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+        .stat-label { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; }
+
+        /* ── EXPERIENCE ── */
+        .job { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem 2rem; margin-bottom: 3.5rem; align-items: start; }
+        .job:last-child { margin-bottom: 0; }
+
+        .job-meta { grid-column: 1 / -1; display: contents; }
+
+        .job-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--black);
+            letter-spacing: -0.01em;
+        }
+        .job-period {
+            font-size: 0.8rem;
+            color: var(--light);
+            white-space: nowrap;
+            padding-top: 0.15rem;
+            text-align: right;
+        }
+        .job-company {
+            grid-column: 1 / -1;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-top: -0.1rem;
+            margin-bottom: 0.9rem;
+        }
+        .job-company::before { content: ''; }
+
+        .job-bullets { grid-column: 1 / -1; list-style: none; }
+        .job-bullets li {
+            font-size: 0.9rem;
+            color: var(--mid);
+            line-height: 1.7;
+            padding-left: 1.1rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+        .job-bullets li::before {
+            content: '–';
+            position: absolute;
+            left: 0;
+            color: var(--light);
+        }
+
+        .job-divider {
+            height: 1px;
+            background: var(--rule);
+            margin: 3rem 0;
+        }
+
+        /* ── EDUCATION ── */
+        .edu-item {}
+        .edu-school { font-size: 1rem; font-weight: 600; color: var(--black); margin-bottom: 0.3rem; }
+        .edu-program { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.3rem; }
+        .edu-years { font-size: 0.82rem; color: var(--light); }
+
+        /* ── SKILLS ── */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1px;
+            background: var(--rule);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .skill-block {
+            background: var(--bg);
+            padding: 1.5rem 1.75rem;
+        }
+        .skill-block:hover { background: var(--bg-subtle); }
+
+        .skill-cat {
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--black);
+            margin-bottom: 0.6rem;
+        }
+        .skill-items { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+        /* ── TOOLS ── */
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+        .tool-tag {
+            font-size: 0.83rem;
+            color: var(--mid);
+            background: var(--bg-subtle);
+            border: 1px solid var(--rule);
+            border-radius: 6px;
+            padding: 0.45rem 1rem;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .tool-tag:hover { border-color: var(--light); color: var(--black); }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--rule);
+            padding: 2.5rem 0;
+            font-size: 0.8rem;
+            color: var(--light);
+        }
+        .footer-inner {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+        footer a:hover { color: var(--black); }
+
+        /* ── RESPONSIVE: TABLET ── */
+        @media (max-width: 900px) {
+            .container { max-width: 100%; padding: 0 2rem; }
+            .nav-links { gap: 1.75rem; }
+            .stats { grid-template-columns: repeat(3, 1fr); }
+            .skills-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        /* ── RESPONSIVE: MOBILE ── */
+        @media (max-width: 640px) {
+            nav { padding: 0 1.25rem; }
+            .nav-links { display: none; }
+            .btn-download { display: none; }
+            .footer-inner { justify-content: center; padding: 0 1.25rem; }
+            .footer-cta { width: 100%; justify-content: center; }
+            .nav-hamburger { display: flex; }
+            .container { padding: 0 1.25rem; }
+            section { padding: 3rem 0; }
+            .section-label { margin-bottom: 2rem; }
+            .stats { grid-template-columns: repeat(3, 1fr); }
+            .stat { padding: 1.25rem 0.75rem; }
+            .stat-num { font-size: 1.5rem; }
+            .job { grid-template-columns: 1fr; gap: 0.25rem 0; }
+            .job-period { text-align: left; margin-bottom: 0.2rem; }
+            .job-divider { margin: 2rem 0; }
+            .skills-grid { grid-template-columns: 1fr 1fr; }
+            .hero { padding: 2.5rem 1.5rem; }
+            .hero h1 { font-size: clamp(2.2rem, 10vw, 3rem); }
+            .hero-contacts .sep { display: none; }
+            .hero-contacts { gap: 0.3rem 0.6rem; }
+            footer { justify-content: center; text-align: center; padding: 2rem 1.25rem; }
+        }
+
+        @media (max-width: 400px) {
+            .skills-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            nav { transition: none; }
+        }
+
+        /* ── FADE-IN ── */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: none; }
+    </style>
+</head>
+<body>
+
+<nav id="navbar">
+    <a class="nav-brand" href="https://haotadesign.com">
+        <img class="logo-black" src="https://raw.githubusercontent.com/haotadesign/portfolio-website/89a4db6b08de1d8db25c2c887fe9107ac32fe3e5/Branding/haotadesign_Logo_Black.svg" alt="Hao Ta Design" height="22">
+        <img class="logo-white" src="https://raw.githubusercontent.com/haotadesign/portfolio-website/89a4db6b08de1d8db25c2c887fe9107ac32fe3e5/Branding/haotadesign_Logo_White.svg" alt="Hao Ta Design" height="22">
+    </a>
+    <div class="nav-center">
+        <ul class="nav-links">
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#tools">Tools</a></li>
+        </ul>
+    </div>
+    <div class="nav-right">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="btn-download" id="dlBtnNav">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 1v8M4 6.5 7 10l3-3.5M2 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Download PDF
+        </button>
+        <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#experience" class="mobile-link">Experience</a>
+    <a href="#education" class="mobile-link">Education</a>
+    <a href="#skills" class="mobile-link">Skills</a>
+    <a href="#tools" class="mobile-link">Tools</a>
+    <button class="mobile-download" id="dlBtnMobile">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6.5 7 10l3-3.5M2 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download PDF
+    </button>
+</div>
+
+<header class="hero">
+    <div class="hero-inner">
+        <span class="hero-eyebrow">Senior Designer · HCMC, Vietnam</span>
+        <h1>Hao Ta</h1>
+        <p class="hero-sub">Brand Identity · Editorial Systems · Digital Experiences</p>
+        <div class="hero-contacts">
+            <a href="mailto:hello@haotadesign.com">hello@haotadesign.com</a>
+            <span class="sep">|</span>
+            <span>+84 336 587 879</span>
+            <span class="sep">|</span>
+            <a href="https://linkedin.com/in/haotadesign" target="_blank" rel="noopener">LinkedIn</a>
+            <span class="sep">|</span>
+            <a href="https://haotadesign.com">haotadesign.com</a>
+        </div>
+    </div>
+</header>
+
+<section id="summary">
+    <div class="container fade-in">
+        <p class="section-label">Summary</p>
+        <p class="summary-text">Senior designer specializing in <strong>brand identity</strong>, <strong>editorial systems</strong>, and <strong>digital experiences</strong>. 9 years delivering high-quality work across industries, leading cross-functional teams, and shipping 70+ projects per year with a 100% on-time rate.</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-num">9</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">70+</div>
+                <div class="stat-label">Projects / Year</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">1.8M</div>
+                <div class="stat-label">Monthly Readers</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="experience">
+    <div class="container fade-in">
+        <p class="section-label">Experience</p>
+
+        <div class="job">
+            <div class="job-title">Designer</div>
+            <div class="job-period">Feb 2024 – Present</div>
+            <div class="job-company">Codex Digital — Creative Agency, Remote</div>
+            <ul class="job-bullets">
+                <li>Own end-to-end design for identity, advertising, and digital; deliver dozens of campaigns per quarter across insurance, retail, B2B, and consumer products.</li>
+                <li>Managed up to 20 concurrent projects; shipped 70+ annually with 100% on-time delivery; reduced revision cycles through clearer specs and QA.</li>
+                <li>Partnered with Creative Director and cross-functional teams to produce assets that drove CTR, sign-ups, and brand lift.</li>
+                <li>Earned Spotlight Employee Award (2024, 2025) for outstanding performance and reliability.</li>
+            </ul>
+        </div>
+
+        <div class="job-divider"></div>
+
+        <div class="job">
+            <div class="job-title">Freelance Senior Designer</div>
+            <div class="job-period">Oct 2021 – Jan 2024</div>
+            <div class="job-company">Independent</div>
+            <ul class="job-bullets">
+                <li>Developed logos and identity systems for various brands, improving market presence and client engagement.</li>
+                <li>Notable projects: Hoang Thien Homestay &amp; Sports, Basketball NSW Logos.</li>
+            </ul>
+        </div>
+
+        <div class="job-divider"></div>
+
+        <div class="job">
+            <div class="job-title">Senior Graphic Designer</div>
+            <div class="job-period">Oct 2018 – Sep 2021</div>
+            <div class="job-company">InBold — Creative Agency, HCMC</div>
+            <ul class="job-bullets">
+                <li>Co-led a 12-person team: scoped work, delegated tasks, and set deadlines; improved throughput and reduced error rate through QC checklists.</li>
+                <li>Secured first-pass approvals in 90% of client reviews.</li>
+                <li>Supported 80% of layouts for 16 publications; publications reached 1.8M monthly readers and 2.1M digital users.</li>
+                <li>Specialized in visual identity, marketing/advertising, final artworking, and QA across industries.</li>
+            </ul>
+        </div>
+
+        <div class="job-divider"></div>
+
+        <div class="job">
+            <div class="job-title">Graphic Designer</div>
+            <div class="job-period">Oct 2017 – Sep 2018</div>
+            <div class="job-company">SCE Project — Architecture, HCMC</div>
+            <ul class="job-bullets">
+                <li>Collaborated with 15+ architects and interior designers on brand and visual communication across 5+ key projects.</li>
+                <li>Delivered editorial and presentation assets for projects across 5+ Indo-Pacific countries; reduced approval time by standardizing decks and handoff.</li>
+            </ul>
+        </div>
+
+        <div class="job-divider"></div>
+
+        <div class="job">
+            <div class="job-title">Junior Graphic Designer</div>
+            <div class="job-period">Jan 2016 – Sep 2017</div>
+            <div class="job-company">ThietThach Group — Construction, HCMC</div>
+            <ul class="job-bullets">
+                <li>Created marketing materials aligned with brand guidelines; delivered on time with consistent QA.</li>
+                <li>Contributed to communications and events with creative assets, increasing campaign reach and engagement.</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="education">
+    <div class="container fade-in">
+        <p class="section-label">Education</p>
+        <div class="edu-item">
+            <div class="edu-school">University of Science VNU-HCM</div>
+            <div class="edu-program">Coursework toward B.S. Computer Systems Networks &amp; Telecommunications</div>
+            <div class="edu-years">2009 – 2013</div>
+        </div>
+    </div>
+</section>
+
+<section id="skills">
+    <div class="container fade-in">
+        <p class="section-label">Skills</p>
+        <div class="skills-grid">
+            <div class="skill-block">
+                <div class="skill-cat">Brand</div>
+                <div class="skill-items">Logo, Identity Systems, Guidelines, Packaging</div>
+            </div>
+            <div class="skill-block">
+                <div class="skill-cat">Print</div>
+                <div class="skill-items">Editorial Design, Publications, Collateral, Production Artwork</div>
+            </div>
+            <div class="skill-block">
+                <div class="skill-cat">Social</div>
+                <div class="skill-items">Campaign Assets, Visual Content, Social Templates, OOH</div>
+            </div>
+            <div class="skill-block">
+                <div class="skill-cat">Leadership</div>
+                <div class="skill-items">Creative Direction, Design Thinking, Workflow, QA</div>
+            </div>
+            <div class="skill-block">
+                <div class="skill-cat">AI</div>
+                <div class="skill-items">ChatGPT, Gemini, Grok, Perplexity — ideation, copy, research, QA</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tools">
+    <div class="container fade-in">
+        <p class="section-label">Tools</p>
+        <div class="tools-list">
+            <span class="tool-tag">InDesign</span>
+            <span class="tool-tag">Illustrator</span>
+            <span class="tool-tag">Photoshop</span>
+            <span class="tool-tag">After Effects</span>
+            <span class="tool-tag">Premiere Pro</span>
+            <span class="tool-tag">Figma</span>
+            <span class="tool-tag">Framer</span>
+            <span class="tool-tag">Canva</span>
+            <span class="tool-tag">Microsoft Office</span>
+        </div>
+    </div>
+</section>
+
+<footer id="contact">
+    <div class="footer-inner">
+        <span>&copy; 2026 Hao Ta</span>
+        <div class="footer-cta">
+            <a class="btn-outline" href="https://haotadesign.com">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Back to haotadesign.com
+            </a>
+            <button class="btn-download" id="dlBtnFooter">
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6.5 7 10l3-3.5M2 12h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Download PDF
+            </button>
+        </div>
+    </div>
+</footer>
+
+<button class="back-top" id="backTop" aria-label="Back to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script>
+    // ── Framer embed: report height to parent for auto-resize ──
+    function reportHeight() {
+        const h = document.documentElement.scrollHeight;
+        window.parent.postMessage({ type: 'haota-resume-height', height: h }, '*');
+    }
+    window.addEventListener('load', reportHeight);
+    new ResizeObserver(reportHeight).observe(document.body);
+
+    // ── Smart nav hide/show (uses document scroll, works in both iframe and standalone) ──
+    const navbar = document.getElementById('navbar');
+    let lastY = 0, ticking = false;
+    const scrollTarget = window;
+    scrollTarget.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const y = window.scrollY;
+                navbar.classList.toggle('hidden', y > lastY && y > 80);
+                lastY = y <= 0 ? 0 : y;
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // ── Dark / Light toggle ──
+    const html = document.documentElement;
+    const themeBtn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initTheme = saved || (prefersDark ? 'dark' : 'light');
+    html.setAttribute('data-theme', initTheme);
+    themeBtn.addEventListener('click', () => {
+        const isDark = html.getAttribute('data-theme') === 'dark';
+        const next = isDark ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    });
+    // Follow system changes unless user has manually set a preference
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem('theme')) {
+            html.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        }
+    });
+
+    // ── Hamburger menu ──
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+        const open = hamburger.classList.toggle('open');
+        mobileMenu.classList.toggle('open', open);
+    });
+    mobileMenu.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => {
+            hamburger.classList.remove('open');
+            mobileMenu.classList.remove('open');
+        });
+    });
+
+    // ── Direct PDF download ──
+    const PDF_URL = 'https://framerusercontent.com/assets/NPCIjJL9Ak1Neq4KGYW3YZMxfvQ.pdf';
+    const PDF_NAME = 'Hao-Ta_Senior-Designer_Resume.pdf';
+    function downloadPDF() {
+        // Create a hidden anchor, set it to the Google Docs viewer's forced-download URL
+        // Framer CDN supports direct download via Content-Disposition when fetched as blob
+        fetch(PDF_URL)
+            .then(r => r.blob())
+            .then(blob => {
+                const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/octet-stream' }));
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = PDF_NAME;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 300);
+            })
+            .catch(() => {
+                // Last-resort: force download via a proxy-style URL trick
+                const a = document.createElement('a');
+                a.href = PDF_URL + '?dl=1';
+                a.download = PDF_NAME;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+    }
+    ['dlBtnNav','dlBtnFooter','dlBtnMobile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', downloadPDF);
+    });
+
+    // ── Back to top ──
+    const backTop = document.getElementById('backTop');
+    window.addEventListener('scroll', () => {
+        backTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // ── Fade-in on scroll ──
+    const faders = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+        });
+    }, { threshold: 0.08 });
+    faders.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
